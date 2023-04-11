@@ -1048,8 +1048,8 @@ class ErnieLayoutForPretraining(ErnieLayoutPretrainedModel):
 class ErnieLayoutForTokenClassification(ErnieLayoutPretrainedModel):
 
     def __init__(self, config):
-        super(ErnieLayoutForTokenClassification, self).__init__(config)
-        self.num_classes = config.num_classes
+        super().__init__(config)
+        self.num_labels = config.num_labels
         self.ernie_layout = ErnieLayoutModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
@@ -1103,11 +1103,11 @@ class ErnieLayoutForTokenClassification(ErnieLayoutPretrainedModel):
 
             if attention_mask is not None:
                 active_loss = attention_mask.view(-1) == 1
-                active_logits = logits.view(-1, self.num_classes)[active_loss]
+                active_logits = logits.view(-1, self.num_labels)[active_loss]
                 active_labels = labels.view(-1)[active_loss]
                 loss = loss_fct(active_logits, active_labels)
             else:
-                loss = loss_fct(logits.view(-1, self.num_classes), labels.view(-1))
+                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
 
         return TokenClassifierOutput(
             loss=loss,
